@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#090a0e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="OMERTÀ: Empire of Ash — a mafia world simulator. Own the streets of Port Vesuvio." />
+  <title>OMERTÀ — Empire of Ash</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="scene" aria-label="Port Vesuvio game world"></canvas>
+    <div id="vignette"></div>
+    <div id="grain"></div>
+    <div id="damage-flash"></div>
+    <div id="speed-lines"></div>
+
+    <!-- ============================== HUD ============================== -->
+    <div id="hud" class="hidden">
+      <header id="hud-top">
+        <div class="cash-block">
+          <span class="eyebrow">CASH</span>
+          <div id="cash" class="cash">$2,500</div>
+          <div id="income" class="income">+$0 / min</div>
+        </div>
+        <div id="district-chip" class="district-chip">
+          <i></i><span id="district-name">LITTLE ITALY</span>
+        </div>
+        <div class="top-right">
+          <div id="wanted" class="wanted" aria-label="Police heat">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <div id="clock" class="clock">19:03</div>
+          <button id="settings-btn" class="icon-btn" aria-label="Settings">
+            <svg viewBox="0 0 24 24"><path d="M19.4 13a7.9 7.9 0 0 0 0-2l2.1-1.5-2-3.4-2.5 1a7 7 0 0 0-1.7-1L15 3h-4l-.3 2.8a7 7 0 0 0-1.7 1l-2.5-1-2 3.4L6.6 11a7.9 7.9 0 0 0 0 2l-2.1 1.5 2 3.4 2.5-1a7 7 0 0 0 1.7 1L11 21h4l.3-2.8a7 7 0 0 0 1.7-1l2.5 1 2-3.4L19.4 13ZM13 15.5A3.5 3.5 0 1 1 13 8a3.5 3.5 0 0 1 0 7.5Z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <section id="objective" class="objective-card">
+        <div class="objective-head"><span id="objective-kind">CONTRACT</span><span id="objective-district">L. ITALY</span></div>
+        <h3 id="objective-title">A Friend of Ours</h3>
+        <p id="objective-desc">Head to the gold marker.</p>
+        <div class="objective-foot"><span id="objective-distance">— m</span><span id="objective-timer" class="hidden"></span></div>
+      </section>
+
+      <div id="minimap-wrap">
+        <div class="minimap-ring"><canvas id="minimap" width="320" height="320"></canvas></div>
+        <button id="empire-btn" class="map-btn">EMPIRE</button>
+      </div>
+
+      <div id="vitals">
+        <div class="vital-label"><span>HEALTH</span><span id="health-text">100</span></div>
+        <div class="health-track"><div id="health-fill"></div></div>
+        <div id="crew-chip" class="crew-chip hidden">♟ <span id="crew-count">0</span> CREW</div>
+      </div>
+
+      <div id="dialogue" class="dialogue hidden">
+        <span id="dialogue-speaker">VINNIE</span>
+        <p id="dialogue-text"></p>
+      </div>
+
+      <div id="context" class="context hidden">
+        <span class="key">ACTION</span>
+        <span id="context-label">Enter vehicle</span>
+      </div>
+
+      <div id="mission-banner" class="mission-banner hidden">
+        <span id="banner-kicker">CONTRACT COMPLETE</span>
+        <h2 id="banner-title">The books are balanced</h2>
+        <div id="banner-sub">+$1,200 · +40 RESPECT</div>
+      </div>
+
+      <div id="toasts" class="toasts"></div>
+      <div id="subtitle" class="subtitle hidden"></div>
+
+      <!-- touch controls -->
+      <div id="joystick" class="joystick" aria-label="Movement joystick">
+        <div class="joy-base">
+          <div class="joy-ring"></div>
+          <div id="joy-knob" class="joy-knob"></div>
+        </div>
+        <span class="joy-label">MOVE</span>
+      </div>
+
+      <div id="actions" class="actions">
+        <button id="sprint-btn" class="action-btn small" aria-label="Sprint or handbrake">
+          <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+          <span>RUN</span>
+        </button>
+        <button id="fire-btn" class="action-btn fire" aria-label="Fire weapon">
+          <div class="ammo-ring"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg></div>
+          <span id="ammo-text">12</span>
+        </button>
+        <button id="action-btn" class="action-btn" aria-label="Context action">
+          <svg viewBox="0 0 24 24"><path d="M9 3h6v5h5v6h-5v7H9v-7H4V8h5V3Z"/></svg>
+          <span id="action-label">USE</span>
+        </button>
+      </div>
+
+      <div id="tilt-chip" class="tilt-chip hidden">TILT STEERING</div>
+    </div>
+
+    <!-- ============================ SPLASH ============================ -->
+    <section id="splash" class="screen">
+      <div class="splash-shade"></div>
+      <div class="splash-top">
+        <span>PORT VESUVIO</span><i>◆</i><span>EST. 1954</span>
+      </div>
+      <div class="splash-center">
+        <div class="eyebrow gold">A CITY. A FAMILY. A FORTUNE.</div>
+        <h1 class="logo">OMERTÀ</h1>
+        <div class="deco-rule"><span></span><i>◆</i><span></span></div>
+        <h2 class="logo-sub">EMPIRE OF ASH</h2>
+        <p class="splash-copy">Build a criminal dynasty in an open-world city.<br />Own the rackets. Buy the cops. Outlive your rivals.</p>
+        <div class="splash-actions">
+          <button id="start-btn" class="btn primary">TAKE THE CITY</button>
+          <button id="continue-btn" class="btn ghost hidden">CONTINUE EMPIRE</button>
+        </div>
+        <div class="splash-links">
+          <button id="how-btn" class="text-btn">HOW TO PLAY</button>
+          <span>·</span>
+          <button id="splash-settings-btn" class="text-btn">SETTINGS</button>
+        </div>
+      </div>
+      <div class="splash-footer">
+        <button id="tilt-splash-btn" class="tilt-toggle" aria-pressed="false">
+          <span class="toggle-dot"></span>
+          <span>TILT STEERING <small>OPTIONAL</small></span>
+        </button>
+        <span class="footer-note">HEADPHONES RECOMMENDED · TOUCH TO BEGIN</span>
+      </div>
+    </section>
+
+    <!-- ============================ EMPIRE =========================== -->
+    <section id="empire-panel" class="overlay panel-screen hidden">
+      <div class="panel-head">
+        <div>
+          <div class="eyebrow gold">THE FAMILY LEDGER</div>
+          <h2>EMPIRE</h2>
+        </div>
+        <div class="panel-stats">
+          <div><span>NET WORTH</span><strong id="empire-worth">$2,500</strong></div>
+          <div><span>INCOME / MIN</span><strong id="empire-income">$0</strong></div>
+          <div><span>CREW</span><strong id="empire-crew">0 / 6</strong></div>
+          <div><span>RANK</span><strong id="empire-rank">ASSOCIATE</strong></div>
+        </div>
+        <button class="close-btn" data-close="empire-panel" aria-label="Close">✕</button>
+      </div>
+      <div class="empire-body">
+        <div id="district-list" class="district-list"></div>
+        <aside class="empire-aside">
+          <div class="paper-card crew-card">
+            <div class="eyebrow gold">THE CREW</div>
+            <h3>Men who owe you</h3>
+            <p class="muted">Every soldier protects the family, follows you into fire, and skims a little less than the last guy.</p>
+            <div class="crew-row"><span>ENFORCERS</span><strong id="aside-crew">0</strong></div>
+            <div class="crew-row"><span>INCOME BONUS</span><strong id="aside-bonus">+0%</strong></div>
+            <button id="hire-btn" class="btn small-btn">HIRE SOLDIER · $2,000</button>
+          </div>
+          <div class="paper-card advice-card">
+            <div class="eyebrow gold">VINNIE SAYS</div>
+            <p id="empire-advice">“Buy a racket, then break a few noses. That’s how a neighborhood learns your name.”</p>
+          </div>
+          <button id="close-empire-btn" class="btn ghost wide">BACK TO THE STREET</button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- =========================== HOW TO PLAY ======================= -->
+    <section id="how-panel" class="overlay panel-screen hidden">
+      <div class="panel-head">
+        <div><div class="eyebrow gold">THE RULES OF THE STREET</div><h2>HOW TO PLAY</h2></div>
+        <button class="close-btn" data-close="how-panel" aria-label="Close">✕</button>
+      </div>
+      <div class="how-grid">
+        <article><span class="how-icon">◉</span><h3>MOVE</h3><p>Drag the left stick. Hold <b>RUN</b> to sprint. Swipe the open street to swing the camera; pinch to zoom.</p></article>
+        <article><span class="how-icon">✦</span><h3>TAKE THE WHEEL</h3><p>Stand near any car and tap <b>ACTION</b>. Steer with the stick, hold <b>RUN</b> as a handbrake, and ram what you must.</p></article>
+        <article><span class="how-icon">✜</span><h3>MAKE MONEY</h3><p>Follow the gold beam. Tap <b>ACTION</b> to shake down shops, hit rivals, run cargo, or take a rival HQ.</p></article>
+        <article><span class="how-icon">◆</span><h3>BUILD AN EMPIRE</h3><p>Open <b>EMPIRE</b> to buy rackets and hire soldiers. Passive income flows every second; control all six districts to become Don.</p></article>
+        <article><span class="how-icon">★</span><h3>MIND THE HEAT</h3><p>Crime brings police. Lose your stars by breaking sight and lying low. If you fall, the family pays for the funeral.</p></article>
+        <article><span class="how-icon">⌁</span><h3>OPTIONAL TILT</h3><p>Enable tilt in Settings to steer with your device. On iPhone, iOS will ask for motion permission. The stick always works.</p></article>
+      </div>
+      <div class="panel-foot"><button class="btn" data-close="how-panel">I UNDERSTAND</button></div>
+    </section>
+
+    <!-- ============================ SETTINGS ========================= -->
+    <section id="settings-panel" class="overlay panel-screen hidden">
+      <div class="panel-head">
+        <div><div class="eyebrow gold">THE QUIET ROOM</div><h2>SETTINGS</h2></div>
+        <button class="close-btn" data-close="settings-panel" aria-label="Close">✕</button>
+      </div>
+      <div class="settings-list">
+        <button id="sound-toggle" class="setting-row" aria-pressed="true">
+          <span><b>SOUND & MUSIC</b><small>Procedural lounge, sirens and gunfire</small></span><i class="switch"></i>
+        </button>
+        <button id="tilt-toggle" class="setting-row" aria-pressed="false">
+          <span><b>TILT STEERING</b><small>Use device motion for steering. iOS asks permission.</small></span><i class="switch"></i>
+        </button>
+        <button id="invert-toggle" class="setting-row" aria-pressed="false">
+          <span><b>INVERT TILT</b><small>For however you hold your phone</small></span><i class="switch"></i>
+        </button>
+        <button id="reset-btn" class="setting-row danger">
+          <span><b>BURN THE LEDGER</b><small>Erase this empire and start again</small></span><i>RESET</i>
+        </button>
+      </div>
+      <p class="settings-note">Progress saves automatically to this device. Tilt is optional and never required to play.</p>
+      <div class="panel-foot"><button class="btn" data-close="settings-panel">BACK</button></div>
+    </section>
+
+    <!-- ============================ DEATH ============================ -->
+    <section id="death-screen" class="screen death hidden">
+      <div class="death-inner">
+        <div class="eyebrow gold">THE FAMILY BURIES ITS MISTAKES</div>
+        <h2>YOU GOT MADE</h2>
+        <p id="death-sub">They found you in the gutter on Mulberry Street.</p>
+        <div class="death-count">RESPAWNING IN <b id="death-timer">4</b></div>
+      </div>
+    </section>
+
+    <!-- ============================ ENDING =========================== -->
+    <section id="ending" class="screen ending hidden">
+      <div class="ending-inner">
+        <div class="eyebrow gold">ALL SIX DISTRICTS ANSWER TO ONE NAME</div>
+        <h1 class="logo small">DON</h1>
+        <h2 class="logo-sub">OF PORT VESUVIO</h2>
+        <p>The city is yours — every dock, every club, every crooked judge. The ash settles. The family endures.</p>
+        <div class="ending-stats">
+          <div><span>NET WORTH</span><strong id="end-worth">$0</strong></div>
+          <div><span>RACKETS</span><strong id="end-rackets">0</strong></div>
+          <div><span>KILLS</span><strong id="end-kills">0</strong></div>
+          <div><span>TIME</span><strong id="end-time">0:00</strong></div>
+        </div>
+        <button id="keep-playing-btn" class="btn primary">KEEP THE CITY</button>
+      </div>
+    </section>
+
+    <div id="rotate-hint" class="rotate-hint hidden">
+      <span>↻</span> TURN YOUR DEVICE FOR THE FULL VIEW
+    </div>
+    <div id="boot-error" class="boot-error hidden"></div>
+  </div>
+  <script type="module" src="js/game.js"></script>
+</body>
+</html>
