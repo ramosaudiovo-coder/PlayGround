@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#07080d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="OMERTÀ: Empire of Ashes — an open-world mafia empire simulator built for touch. Drive the city, take the rackets, build your family." />
+    <title>OMERTÀ — Empire of Ashes</title>
+  </head>
+  <body>
+    <main id="game">
+      <canvas id="scene" aria-label="OMERTÀ game world"></canvas>
+      <div class="grade" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <div id="boot" class="boot">
+        <div class="boot-crest">
+          <svg viewBox="0 0 80 94" aria-hidden="true">
+            <path d="M40 3 73 14v30c0 22-14 38-33 47C21 82 7 66 7 44V14L40 3Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M22 36h36M28 48h24M40 25v39M31 64l9 8 9-8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M24 22l8 8 8-12 8 12 8-8v10H24V22Z" fill="currentColor" opacity=".7"/>
+          </svg>
+        </div>
+        <p>WAKING THE CITY</p>
+        <div class="boot-line"><i></i></div>
+      </div>
+
+      <section id="intro" class="intro" aria-label="Main menu">
+        <div class="intro-shade" aria-hidden="true"></div>
+        <header class="intro-top">
+          <span>AN OPEN-WORLD CRIME SAGA</span>
+          <span class="intro-year">1987</span>
+          <span>VOL. I — EMPIRE OF ASHES</span>
+        </header>
+
+        <div class="intro-center">
+          <div class="crest" aria-hidden="true">
+            <svg viewBox="0 0 120 136">
+              <path class="crest-line" d="M60 4 111 20v46c0 33-21 57-51 66C30 123 9 99 9 66V20L60 4Z"/>
+              <path class="crest-line inner" d="M60 13 102 27v38c0 27-17 48-42 57-25-9-42-30-42-57V27L60 13Z"/>
+              <path class="crest-fill" d="M33 50l12 12 15-23 15 23 12-12v18H33V50Z"/>
+              <path class="crest-line" d="M38 80h44M46 92h28M60 38v52"/>
+              <circle cx="60" cy="65" r="3.2" class="crest-dot"/>
+            </svg>
+          </div>
+          <p class="kicker">A FAMILY. A CITY. A RECKONING.</p>
+          <h1>OMERT<span class="grave">À</span></h1>
+          <div class="title-rule"><i></i><span>EMPIRE OF ASHES</span><i></i></div>
+          <p class="tagline">Every city has a throne.<br /><em>Take yours.</em></p>
+
+          <div class="intro-actions">
+            <button id="startBtn" class="btn-primary" type="button">
+              <span class="btn-shine"></span>
+              <span>ENTER THE CITY</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+            </button>
+            <button id="introTiltBtn" class="btn-ghost" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/></svg>
+              <span>TILT STEERING</span><b id="introTiltState">OFF</b>
+            </button>
+          </div>
+          <p class="intro-note">TOUCH TO MOVE · DRAG TO LOOK · BUILD YOUR FAMILY</p>
+        </div>
+
+        <footer class="intro-bottom">
+          <div class="intro-stat"><b>05</b><span>BOROUGHS</span></div>
+          <div class="intro-stat"><b>12</b><span>RACKETS</span></div>
+          <div class="intro-stat"><b>∞</b><span>WAYS TO RULE</span></div>
+          <p>HEADPHONES RECOMMENDED</p>
+        </footer>
+      </section>
+
+      <section id="hud" class="hud hidden" aria-label="Game interface">
+        <header class="hud-top">
+          <div class="identity">
+            <div class="identity-crest" aria-hidden="true">
+              <svg viewBox="0 0 40 48"><path d="M20 2 37 7v16c0 11-7 19-17 23C10 42 3 34 3 23V7L20 2Z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M12 18l4 4 5-8 5 8 4-4v7H12v-7Z" fill="currentColor" opacity=".8"/></svg>
+            </div>
+            <div class="identity-copy">
+              <span class="brand-small">OMERTÀ</span>
+              <span class="rank-line"><b id="rankName">ASSOCIATE</b><i></i><span><b id="respectValue">0</b> RESPECT</span></span>
+            </div>
+          </div>
+
+          <div class="district-hud" id="districtHud">
+            <div class="district-heading">
+              <span>YOUR TERRITORY</span>
+              <b id="districtName">LITTLE ITALY</b>
+            </div>
+            <div class="control-track"><i id="districtFill"></i><span class="control-notch"></span></div>
+            <div class="district-meta">
+              <span id="districtCount">0 / 3 RACKETS</span>
+              <span id="districtStatus">VANZETTI CONTROL</span>
+            </div>
+          </div>
+
+          <div class="ledger">
+            <div class="money"><span>$</span><b id="moneyValue">2,500</b></div>
+            <div class="heat" id="heatStars" aria-label="Police heat">
+              <svg viewBox="0 0 20 19" aria-hidden="true"><path d="m10 1.5 2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.5l-5.2 2.9 1.2-5.8-4.4-4 5.9-.7L10 1.5Z"/></svg>
+              <svg viewBox="0 0 20 19" aria-hidden="true"><path d="m10 1.5 2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.5l-5.2 2.9 1.2-5.8-4.4-4 5.9-.7L10 1.5Z"/></svg>
+              <svg viewBox="0 0 20 19" aria-hidden="true"><path d="m10 1.5 2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.5l-5.2 2.9 1.2-5.8-4.4-4 5.9-.7L10 1.5Z"/></svg>
+              <svg viewBox="0 0 20 19" aria-hidden="true"><path d="m10 1.5 2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.5l-5.2 2.9 1.2-5.8-4.4-4 5.9-.7L10 1.5Z"/></svg>
+              <svg viewBox="0 0 20 19" aria-hidden="true"><path d="m10 1.5 2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.5l-5.2 2.9 1.2-5.8-4.4-4 5.9-.7L10 1.5Z"/></svg>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <button id="empireBtn" class="icon-btn" type="button" aria-label="Open empire">
+              <svg viewBox="0 0 24 24"><path d="M3 8h18M5 8v11h14V8M8 8V5l4-2 4 2v3M9 12v4M15 12v4"/></svg>
+            </button>
+            <button id="pauseBtn" class="icon-btn" type="button" aria-label="Pause">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="minimap-wrap">
+          <canvas id="minimap" width="320" height="320" aria-label="City map"></canvas>
+          <span class="minimap-n">N</span>
+          <span class="minimap-label" id="minimapLabel">LITTLE ITALY</span>
+        </div>
+
+        <aside class="objective-panel">
+          <div class="objective-head"><span id="chapterLabel">CHAPTER I</span><i></i><b id="objectiveReward">$1,000</b></div>
+          <h3 id="objectiveTitle">A Seat at the Table</h3>
+          <p id="objectiveDesc">Take over your first racket. Follow the gold light.</p>
+          <div class="objective-progress"><i id="objectiveFill"></i></div>
+          <span class="objective-count" id="objectiveCount">0 / 1</span>
+        </aside>
+
+        <div class="event-feed" id="eventFeed" aria-live="polite"></div>
+
+        <div class="health-wrap">
+          <div class="health-label"><span>VITALS</span><b id="healthValue">100</b></div>
+          <div class="health-track"><i id="healthFill"></i></div>
+        </div>
+
+        <div id="wantedBanner" class="wanted-banner hidden">
+          <span>POLICE ALERT</span><b>EVADE THE CRUISERS</b>
+        </div>
+
+        <div id="contextPrompt" class="context-prompt hidden">
+          <span id="contextKicker">RACKET</span>
+          <b id="contextTitle">Bella's Diner</b>
+          <small id="contextSub">Hold to take over</small>
+        </div>
+
+        <div class="controls" id="controls">
+          <div class="stick-zone">
+            <div id="stick" class="stick" aria-label="Movement joystick">
+              <div class="stick-ring"></div>
+              <div id="stickKnob" class="stick-knob"><i></i></div>
+              <span class="stick-label">MOVE</span>
+            </div>
+          </div>
+          <div class="action-cluster">
+            <button id="sprintBtn" class="round-btn small" type="button" aria-label="Sprint">
+              <svg viewBox="0 0 24 24"><path d="M13 4 5 13h6l-1 7 8-9h-6l1-7Z"/></svg>
+            </button>
+            <button id="fireBtn" class="round-btn fire" type="button" aria-label="Fire weapon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg>
+              <span>FIRE</span>
+            </button>
+            <button id="actionBtn" class="round-btn action" type="button" aria-label="Interact">
+              <svg class="action-icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <span id="actionLabel">ENTER</span>
+              <i id="actionProgress" class="action-progress"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="driveHud" class="drive-hud hidden">
+          <div class="speed"><b id="speedValue">0</b><span>MPH</span></div>
+          <div class="gear"><span id="carName">EMPEROR</span><i></i><b id="gearValue">D</b></div>
+          <div class="tilt-state" id="driveTilt">TILT OFF</div>
+        </div>
+
+        <div id="tutorial" class="tutorial">
+          <span class="tutorial-key">01</span>
+          <div><b>MOVE</b><small>Use the left stick. Drag anywhere to look.</small></div>
+          <span class="tutorial-key">02</span>
+          <div><b>TAKE THE STREETS</b><small>Clear the guards, then hold the action button.</small></div>
+        </div>
+
+        <div id="toasts" class="toasts" aria-live="polite"></div>
+        <div id="chapterFlash" class="chapter-flash hidden">
+          <span>CHAPTER COMPLETE</span>
+          <h2 id="chapterFlashTitle">A Seat at the Table</h2>
+          <p id="chapterFlashReward">$1,000 · RESPECT +25</p>
+        </div>
+      </section>
+
+      <div id="modalLayer" class="modal-layer">
+        <section id="pauseModal" class="modal hidden" aria-label="Pause menu">
+          <div class="modal-card pause-card">
+            <span class="eyebrow">THE CITY WAITS</span>
+            <h2>PAUSED</h2>
+            <div class="pause-actions">
+              <button id="resumeBtn" class="btn-primary compact" type="button"><span>RESUME</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+              <button id="pauseEmpireBtn" class="btn-outline" type="button">THE FAMILY</button>
+            </div>
+            <div class="settings">
+              <div class="setting-row"><div><b>MOTION TILT</b><small>Steer by tilting your device</small></div><button id="pauseTiltBtn" class="toggle" type="button"><i></i><span>OFF</span></button></div>
+              <div class="setting-row"><div><b>SOUND</b><small>Music, engines &amp; gunfire</small></div><button id="soundBtn" class="toggle on" type="button"><i></i><span>ON</span></button></div>
+              <div class="setting-row"><div><b>GRAPHICS</b><small>Cinematic bloom &amp; rain</small></div><button id="qualityBtn" class="toggle on" type="button"><i></i><span>HIGH</span></button></div>
+            </div>
+            <div class="pause-foot">
+              <span id="pauseDistrict">LITTLE ITALY · 0%</span>
+              <button id="restartBtn" class="text-btn" type="button">NEW EMPIRE</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="empireModal" class="modal hidden" aria-label="The family">
+          <div class="empire-shell">
+            <header class="empire-head">
+              <div>
+                <span class="eyebrow">THE FAMILY</span>
+                <h2>EMPIRE</h2>
+              </div>
+              <div class="empire-head-stats">
+                <div><span>LIQUID</span><b id="empireMoney">$2,500</b></div>
+                <div><span>INCOME</span><b id="empireIncome">$0<small>/MIN</small></b></div>
+                <div><span>CREW</span><b id="empireCrew">0<small>/8</small></b></div>
+              </div>
+              <button id="empireClose" class="icon-btn close" type="button" aria-label="Close empire">
+                <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>
+              </button>
+            </header>
+
+            <div class="empire-body">
+              <div class="territory-panel">
+                <div class="panel-title"><span>THE CITY</span><b>TERRITORY</b></div>
+                <canvas id="territoryCanvas" width="700" height="700"></canvas>
+                <div class="map-legend"><span><i class="gold"></i>YOURS</span><span><i class="red"></i>RIVAL</span><span><i class="blue"></i>POLICE</span></div>
+                <p class="territory-copy" id="territoryCopy">Five boroughs. One family rises.</p>
+              </div>
+              <div class="district-list" id="districtList"></div>
+            </div>
+
+            <footer class="empire-foot">
+              <div class="rank-block">
+                <div class="rank-top"><span>FAMILY STANDING</span><b id="empireRank">ASSOCIATE</b></div>
+                <div class="rank-track"><i id="rankFill"></i></div>
+                <small id="rankNext">150 RESPECT TO SOLDIER</small>
+              </div>
+              <button id="hireBtn" class="btn-primary compact hire" type="button">
+                <span>HIRE ASSOCIATE</span><b id="hireCost">$2,000</b>
+              </button>
+            </footer>
+          </div>
+        </section>
+
+        <section id="deathModal" class="modal hidden" aria-label="You were killed">
+          <div class="modal-card death-card">
+            <span class="eyebrow red">THE STREETS COLLECT</span>
+            <h2>YOU WERE<br />GUNNED DOWN</h2>
+            <p>Your family dragged you back to the safehouse. The city took its cut.</p>
+            <div class="death-cost"><span>HOSPITAL &amp; BRIBES</span><b id="deathCost">$500</b></div>
+            <button id="respawnBtn" class="btn-primary compact" type="button"><span>GET BACK UP</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </section>
+
+        <section id="victoryModal" class="modal hidden" aria-label="Victory">
+          <div class="modal-card victory-card">
+            <span class="eyebrow">THE CITY IS YOURS</span>
+            <h2>DON OF<br />ASHES</h2>
+            <p>Every racket. Every borough. Every judge and cop on the payroll. They will tell this story for a hundred years.</p>
+            <div class="victory-stats">
+              <div><b id="victoryMoney">$0</b><span>FORTUNE</span></div>
+              <div><b id="victoryRespect">0</b><span>RESPECT</span></div>
+              <div><b>05</b><span>BOROUGHS</span></div>
+            </div>
+            <button id="keepPlayingBtn" class="btn-primary compact" type="button"><span>KEEP THE CITY</span><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </section>
+      </div>
+
+      <div id="rotateHint" class="rotate-hint">
+        <svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/></svg>
+        <span>ROTATE FOR THE FULL CITY</span>
+      </div>
+      <div id="webglError" class="webgl-error hidden">
+        <h2>THE CITY IS DARK</h2>
+        <p>This browser could not start WebGL. Try a modern browser with hardware acceleration.</p>
+      </div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
