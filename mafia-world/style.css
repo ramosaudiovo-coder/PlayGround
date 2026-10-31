@@ -1,0 +1,135 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  background: #0b0a0c;
+  color: #e8e0d0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+body { line-height: 1.4; }
+
+.screen { display: none; height: 100%; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ---------- Splash ---------- */
+#splash {
+  flex-direction: column; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #141014 0%, #0b0a0c 100%);
+  padding: 20px;
+}
+.card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px; padding: 26px; max-width: 420px; width: 100%; text-align: center;
+}
+.card h1 { margin: 0 0 6px; font-size: 34px; letter-spacing: 4px; color: #f4c542; text-transform: uppercase; }
+.subtitle { color: #c9a227; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.muted { color: #9a8a78; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  border: none; border-radius: 10px; padding: 12px 18px; font-size: 15px; font-weight: 700;
+  cursor: pointer; font-family: inherit; text-transform: uppercase; letter-spacing: 0.5px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn:active { transform: scale(0.96); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: #b3402e; color: #fff; }
+.btn-primary:active { background: #d15a3e; }
+.btn-outline { background: transparent; color: #e8e0d0; border: 1px solid rgba(255,255,255,0.25); }
+.btn-outline:active { background: rgba(255,255,255,0.08); }
+.btn-block { width: 100%; justify-content: center; }
+.big { padding: 16px 24px; font-size: 18px; }
+
+.row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+/* ---------- HUD ---------- */
+.hud-top {
+  display: flex; gap: 8px; padding: 8px 10px; background: #110f12;
+  border-bottom: 1px solid rgba(255,255,255,0.08); justify-content: center; flex-wrap: wrap;
+}
+.stat {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; padding: 6px 10px; font-size: 13px; min-width: 95px; text-align: center;
+}
+.stat .icon { font-size: 16px; margin-right: 6px; }
+.stat b { display: block; font-size: 17px; color: #f4c542; }
+
+/* ---------- Game body ---------- */
+.game-body { display: flex; flex: 1 1 auto; overflow: hidden; gap: 0; }
+.map-wrap { flex: 1; position: relative; min-width: 0; background: #060507; }
+canvas { display: block; width: 100%; height: 100%; background: #0b0a0c; }
+
+.sidebar {
+  width: 330px; max-width: 42vw; background: #110f12;
+  border-left: 1px solid rgba(255,255,255,0.08); overflow-y: auto; display: flex; flex-direction: column;
+}
+.panel {
+  padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.panel h2 { margin: 0 0 8px; font-size: 15px; color: #f4c542; text-transform: uppercase; letter-spacing: 1px; }
+.owner { font-size: 13px; margin-bottom: 6px; color: #c9a227; }
+.control { font-size: 12px; color: #9a8a78; margin-bottom: 10px; }
+.actions { display: flex; flex-direction: column; gap: 6px; }
+.actions .btn { padding: 10px 14px; font-size: 14px; }
+
+.mission { font-size: 15px; margin-bottom: 6px; color: #e8e0d0; line-height: 1.4; }
+.objective { font-size: 13px; color: #b3c7de; margin-bottom: 10px; }
+
+.log-list { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #b9a896; }
+.log-list .entry { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+
+/* ---------- Bottom HUD ---------- */
+.hud-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; background: #110f12; border-top: 1px solid rgba(255,255,255,0.08);
+  gap: 10px; flex-wrap: wrap;
+}
+.dpad {
+  display: grid; grid-template-columns: 52px 52px 52px; grid-template-rows: 52px 52px 52px;
+  gap: 8px; align-items: center; justify-items: center;
+}
+.dpad-row { grid-column: 2 / 3; grid-row: 2 / 3; display: contents; }
+.dpad-btn {
+  width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14); color: #fff; font-size: 24px; display: flex;
+  align-items: center; justify-content: center; line-height: 1;
+}
+.dpad-btn:active { background: rgba(255,255,255,0.2); }
+
+.bottom-center { display: flex; gap: 8px; flex-direction: column; align-items: center; }
+.tilt-btn { white-space: nowrap; }
+.actions-right { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+
+/* ---------- Badges / modals ---------- */
+.tilt-badge {
+  position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.2); color: #f4c542; padding: 4px 10px;
+  border-radius: 12px; font-size: 12px; font-weight: 700; pointer-events: none;
+  z-index: 5;
+}
+.controls-hint { color: #7a6a5a; font-size: 12px; }
+
+.modal {
+  position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.75);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal.hidden { display: none; }
+.modal-card {
+  background: #141215; border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 16px; padding: 24px; max-width: 380px; width: 100%; text-align: center;
+}
+.modal-card h2 { margin: 0 0 12px; color: #f4c542; text-transform: uppercase; letter-spacing: 1px; }
+.modal-card p { color: #b9a896; margin-bottom: 18px; font-size: 14px; }
+
+/* Respect heat crew colors in stats handled by JS classes */
+.hot { color: #ff6b6b !important; }
+.cool { color: #6ec6ff !important; }
+
+@media (max-width: 500px) {
+  .sidebar { width: 280px; }
+  .dpad-btn { width: 46px; height: 46px; font-size: 20px; }
+  .card h1 { font-size: 28px; }
+}

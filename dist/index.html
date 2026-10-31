@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mafia World Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Splash / title -->
+  <div id="splash" class="screen active">
+    <div class="card">
+      <h1>MAFIA WORLD</h1>
+      <div class="subtitle">Open world &bull; Civ 3 style grid &bull; Story mode</div>
+      <p class="muted">Build your crew. Take over districts. Run the city.</p>
+
+      <div class="row" style="margin-top:14px; gap:8px;">
+        <button id="btnNewGame" class="btn btn-primary big">New Game</button>
+        <button id="btnLoadGame" class="btn btn-outline">Load</button>
+      </div>
+
+      <div class="controls-hint" style="margin-top:12px;">
+        <strong>Controls:</strong> Tap adjacent tile to move &bull; D-pad / tilt optional &bull; Action buttons on the right
+      </div>
+    </div>
+  </div>
+
+  <!-- Main game -->
+  <div id="game" class="screen hidden">
+    <header class="hud-top">
+      <div class="stat" id="statMoney"><span class="icon">💵</span> <span id="valMoney">0</span></div>
+      <div class="stat" id="statRespect"><span class="icon">⭐</span> <span id="valRespect">0</span></div>
+      <div class="stat" id="statHeat"><span class="icon">🔥</span> <span id="valHeat">0</span></div>
+      <div class="stat" id="statCrew"><span class="icon">👥</span> <span id="valCrew">0</span></div>
+    </header>
+
+    <div class="game-body">
+      <!-- Left: world map -->
+      <div class="map-wrap">
+        <canvas id="worldCanvas" width="600" height="800"></canvas>
+        <div class="tilt-badge" id="tiltBadge">TILT: OFF</div>
+        <div id="touchLayer"></div>
+      </div>
+
+      <!-- Right: actions / story -->
+      <aside class="sidebar">
+        <div class="panel" id="panelDistrict">
+          <h2 id="distName">District</h2>
+          <div id="distOwner" class="owner"></div>
+          <div id="distControl" class="control"></div>
+          <div class="actions" id="distActions"></div>
+        </div>
+
+        <div class="panel" id="panelStory">
+          <h2>Story</h2>
+          <div id="storyMission" class="mission">No active mission.</div>
+          <div id="storyObjective" class="objective"></div>
+          <div id="storyActions" class="actions"></div>
+        </div>
+
+        <div class="panel" id="panelLog">
+          <h2>Log</h2>
+          <div id="logList" class="log-list"></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Bottom: D-pad + tilt toggle -->
+    <footer class="hud-bottom">
+      <div class="dpad">
+        <button class="dpad-btn" data-dir="up">▲</button>
+        <div class="dpad-row">
+          <button class="dpad-btn" data-dir="left">◀</button>
+          <button class="dpad-btn" data-dir="center">◯</button>
+          <button class="dpad-btn" data-dir="right">▶</button>
+        </div>
+        <button class="dpad-btn" data-dir="down">▼</button>
+      </div>
+
+      <div class="bottom-center">
+        <button id="btnTilt" class="btn tilt-btn">Enable Tilt</button>
+        <button id="btnMenu" class="btn btn-outline">Menu</button>
+      </div>
+
+      <div class="actions-right" id="quickActions"></div>
+    </footer>
+  </div>
+
+  <!-- Menu modal -->
+  <div id="modalMenu" class="modal hidden">
+    <div class="modal-card">
+      <h2>Menu</h2>
+      <button id="mSave" class="btn btn-block">Save Game</button>
+      <button id="mLoad" class="btn btn-block">Load Game</button>
+      <button id="mTiltToggle" class="btn btn-block">Tilt Control: <span id="mTiltState">Off</span></button>
+      <button id="mReset" class="btn btn-outline btn-block">New Game</button>
+      <button id="mClose" class="btn btn-outline btn-block">Resume</button>
+    </div>
+  </div>
+
+  <!-- iOS motion permission -->
+  <div id="iosPerm" class="modal hidden">
+    <div class="modal-card">
+      <h2>Motion Permission</h2>
+      <p>Tilt control needs access to device motion (accelerometer).</p>
+      <button id="iosAllow" class="btn btn-primary btn-block">Allow Motion</button>
+      <button id="iosSkip" class="btn btn-outline btn-block">Skip</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
